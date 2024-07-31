@@ -162,6 +162,36 @@
       var script = document.createElement("script");
       script.src = loaderUrl;
         script.onload = () => {
+            // Function to toggle full-screen mode
+            function toggleFullScreen() {
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen().catch(err => {
+                        console.log(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+                    });
+                } else {
+                    document.exitFullscreen();
+                }
+            }
+
+            // Event listener for orientation change
+            function handleOrientationChange() {
+            if (window.orientation == 90 || window.orientation == -90) {
+                // Enter full-screen mode if in landscape
+                toggleFullScreen();
+            }
+            else {
+                // Exit full-screen mode if not in landscape
+                if (document.fullscreenElement) {
+                document.exitFullscreen();
+            }
+        }
+    }
+
+        window.addEventListener('orientationchange', handleOrientationChange);
+
+        // Initial check in case the page loads in landscape mode
+
+        handleOrientationChange();
             startTimer();
         createUnityInstance(canvas, config, (progress) => {
           unitySetLoaderProgressTo(progress);
@@ -171,6 +201,10 @@
           fullscreenButton.onclick = () => {
             unityInstance.SetFullscreen(1);
           };
+
+
+
+
         }).catch((message) => {
           alert(message);
         });
